@@ -33,6 +33,14 @@ export default function RegisterPage() {
 
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    
+    const handleInputChange = (name: string, value: string) => {
+        setData((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    }
+
 
     return (
         <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -182,7 +190,7 @@ export default function RegisterPage() {
 
                         <div className="text-center">
                             <p className="text-sm text-muted-foreground">
-                                Already have an account? 
+                                Already have an account?
                                 <Link
                                     href="/login"
                                     className="text-primary hover:text-primary/80 font-medium underline-offset-4 hover:underline"
