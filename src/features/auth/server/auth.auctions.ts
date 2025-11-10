@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/drizzle/db";
-import { applicants, employers, users } from "@/drizzle/schema/schema";
+import {  employers, users } from "@/drizzle/schema/schema";
 import argon2 from "argon2";
 import { eq, or } from "drizzle-orm";
 import {
@@ -10,19 +10,13 @@ import {
   RegisterUserData,
   registerUserSchema,
 } from "../auth.schema";
-import {
-  createSessionAndSetCookies,
-  invalidateSession,
-} from "./use-cases/sessions";
+// import {
+//   createSessionAndSetCookies,
+//   invalidateSession,
+// } from "./use-cases/sessions";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import crypto from "crypto";
-
-// 👉 Server Actions in Next.js are special functions that run only on the server, not in the user’s browser.
-
-// They let you perform things like database queries, API calls, form submissions, or data mutations directly from your React components — without creating a separate API route.
-
-// You just mark a function with "use server", and Next.js automatically runs it on the server.
 
 //*When you submit a <form> in Next.js using action={yourServerAction}, the framework sends a FormData object to that server function.
 
@@ -61,12 +55,12 @@ export const registerUserAction = async (data: RegisterUserData) => {
     console.log(result);
 
     if (role === "applicant") {
-      await db.insert(applicants).values({ id: result.insertId });
+      // await db.insert(applicants).values({ id: result.insertId });
     } else {
-      await db.insert(employers).values({ id: result.insertId });
+      // await db.insert(employers).values({ id: result.insertId });
     }
 
-    await createSessionAndSetCookies(result.insertId);
+    // await createSessionAndSetCookies(result.insertId);
 
     return {
       status: "SUCCESS",
@@ -104,7 +98,7 @@ export const loginUserAction = async (data: LoginUserData) => {
     if (!isValidPassword)
       return { status: "ERROR", message: "Invalid Email or Password" };
 
-    await createSessionAndSetCookies(user.id);
+    // await createSessionAndSetCookies(user.id);
 
     return {
       status: "SUCCESS",
@@ -131,7 +125,7 @@ export const logoutUserAction = async () => {
     .update(session)
     .digest("hex");
 
-  await invalidateSession(hashedToken);
+  // await invalidateSession(hashedToken);
   cookieStore.delete("session");
 
   return redirect("/login");

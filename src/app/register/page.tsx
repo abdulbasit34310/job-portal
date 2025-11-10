@@ -8,43 +8,59 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from "@/components/ui/card";
 
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, Lock, Mail, User, UserCheck } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
 import Link from "next/link";
+import { RegisterUserWithConfirmData, registerUserWithConfirmSchema } from '@/features/auth/auth.schema';
+import { registerUserAction } from '@/features/auth/server/auth.auctions';
+import { toast } from 'sonner';
 
-interface RegisterPageProps {
-    name?: string;
-    userName?: string;
-    email?: string;
-    password?: string;
-    confirmPassword?: string;
-    role?: "applicant" | "employer";
-}
+// interface RegisterPageProps {
+//     name?: string;
+//     userName?: string;
+//     email?: string;
+//     password?: string;
+//     confirmPassword?: string;
+//     role?: "applicant" | "employer";
+// }
 
 export default function RegisterPage() {
-    const [data, setData] = useState<RegisterPageProps>({
-        name: "",
-        userName: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-        role: "applicant"
+    const {
+        register,
+        handleSubmit,
+        control,
+        formState: { errors },
+    } = useForm({
+        resolver: zodResolver(registerUserWithConfirmSchema),
     });
+
+    // const [data, setData] = useState<RegisterPageProps>({
+    //     name: "",
+    //     userName: "",
+    //     email: "",
+    //     password: "",
+    //     confirmPassword: "",
+    //     role: "applicant"
+    // });
 
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    
-    const handleInputChange = (name: string, value: string) => {
-        setData((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
+
+    const handleInput = async (data: RegisterUserWithConfirmData) => {
+        const result = await registerUserAction(data);
+
+        if (result.status === "SUCCESS") {
+            // if (data.role === "employer") router.push("/employer-dashboard");
+            // else router.push("/dashboard");
+        }
+        if (result.status === "SUCCESS") toast.success(result.message);
+        else toast.error(result.message);
     }
 
     return (
         <div className="min-h-screen bg-background flex items-center justify-center p-4">
             <Card className="w-full max-w-md">
-
                 <CardHeader className="text-center">
                     <div className="mx-auto w-16 h-16 bg-primary rounded-full flex items-center justify-center mb-4">
                         <UserCheck className="w-8 h-8 text-primary-foreground" />
@@ -54,7 +70,7 @@ export default function RegisterPage() {
                 </CardHeader>
 
                 <CardContent>
-                    <form className="space-y-6">
+                    <form onSubmit={handleSubmit(handleInput)} className="space-y-6">
                         {/* Name Field */}
                         <div className="space-y-2">
                             <Label htmlFor="name">Full Name *</Label>
@@ -65,11 +81,13 @@ export default function RegisterPage() {
                                     type="text"
                                     placeholder="Enter your full name"
                                     required
+                                    {...register("name")}
                                     className={`pl-10 `}
                                 />
                             </div>
                         </div>
 
+                        {/* Username Field */}
                         <div className="space-y-2">
                             <Label htmlFor="userName">Username *</Label>
                             <div className="relative">
@@ -79,11 +97,16 @@ export default function RegisterPage() {
                                     type="text"
                                     placeholder="Choose a username"
                                     required
-                                    className={`pl-10 `}
-
+                                    {...register("userName")}
+                                    className={`pl-10 ${errors.userName ? "border-destructive" : ""
+                                        }`}
                                 />
                             </div>
-
+                            {errors.userName && (
+                                <p className="text-sm text-destructive">
+                                    {errors.userName.message}
+                                </p>
+                            )}
                         </div>
 
                         {/* Email Field */}
@@ -95,14 +118,14 @@ export default function RegisterPage() {
                                     id="email"
                                     type="email"
                                     placeholder="Enter your email"
-
+                                    {...register("email")}
                                     required
                                     className={`pl-10 `}
                                 />
                             </div>
                         </div>
 
-                        {/* Role Selection 
+                        {/* Role Selection */}
                         <div className="space-y-2 w-full">
                             <Label htmlFor="role">I am a *</Label>
                             <Controller
@@ -121,7 +144,6 @@ export default function RegisterPage() {
                                 )}
                             ></Controller>
                         </div>
-                        */}
 
                         {/* Password Field */}
                         <div className="space-y-2">
@@ -133,7 +155,7 @@ export default function RegisterPage() {
                                     type={showPassword ? "text" : "password"}
                                     placeholder="Create a strong password"
                                     required
-
+                                    {...register("password")}
                                     className={`pl-10 pr-10 `}
                                 />
 
@@ -163,7 +185,7 @@ export default function RegisterPage() {
                                     type={showConfirmPassword ? "text" : "password"}
                                     placeholder="Confirm your password"
                                     required
-
+                                    {...register("confirmPassword")}
                                     className={`pl-10 pr-10 `}
                                 />
                                 <Button
@@ -203,4 +225,4 @@ export default function RegisterPage() {
             </Card>
         </div>
     );
-}
+};
