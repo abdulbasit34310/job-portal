@@ -2,13 +2,7 @@
 
 import React, { ChangeEvent, FormEvent, useState } from "react";
 import { Input } from "@/components/ui/input";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from "@/components/ui/card";
 import { Eye, EyeOff, Lock, Mail, UserCheck } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -35,9 +29,11 @@ const LoginForm: React.FC = () => {
     try {
       const result = await loginUserAction(data);
 
+      console.log("Login result:", result);
+
       if (result.status === "SUCCESS") toast.success(result.message);
       else toast.error(result.message);
-    } catch (error) {}
+    } catch (error) { }
   };
 
   return (
@@ -64,9 +60,8 @@ const LoginForm: React.FC = () => {
                   placeholder="Enter your email"
                   required
                   {...register("email")}
-                  className={`pl-10 ${
-                    errors.email ? "border-destructive" : ""
-                  }`}
+                  className={`pl-10 ${errors.email ? "border-destructive" : ""
+                    }`}
                 />
               </div>
               {errors.email && (
@@ -87,9 +82,8 @@ const LoginForm: React.FC = () => {
                   placeholder="Create a strong password"
                   required
                   {...register("password")}
-                  className={`pl-10 ${
-                    errors.password ? "border-destructive" : ""
-                  }`}
+                  className={`pl-10 ${errors.password ? "border-destructive" : ""
+                    }`}
                 />
 
                 <Button
@@ -115,17 +109,17 @@ const LoginForm: React.FC = () => {
 
             {/* Submit Button */}
             <Button type="submit" className="w-full">
-              Create Account
+              Login
             </Button>
 
             <div className="text-center">
               <p className="text-sm text-muted-foreground">
-                Already have an account?
+                Don't have an account?
                 <Link
                   href="/register"
                   className="text-primary hover:text-primary/80 font-medium underline-offset-4 hover:underline"
                 >
-                  Sign in here
+                  Sign up here ⬇️
                 </Link>
               </p>
             </div>

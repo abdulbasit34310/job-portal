@@ -78,15 +78,15 @@ export const employers = pgTable("employers", {
 //     updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().notNull(),
 // });
 
-// // export const tableNameRelations = relations(
-// //   // 1. The main table being defined (e.g., users)
-// //   table,
+// export const tableNameRelations = relations(
+//   // 1. The main table being defined (e.g., users)
+//   table,
 
-// //   // 2. A callback function to define the relationships
-// //   ({ one, many }) => ({
-// //     // ... relationship definitions
-// //   })
-// // );
+//   // 2. A callback function to define the relationships
+//   ({ one, many }) => ({
+//     // ... relationship definitions
+//   })
+// );
 
 // //! Both the one() and many() helper functions take arguments to define the relationship details.
 
@@ -106,13 +106,13 @@ export const employers = pgTable("employers", {
 //     sessions: many(sessions),
 // }));
 
-// export const sessionsRelations = relations(sessions, ({ one }) => ({
-//     // Each session belongs to one user
-//     user: one(users, {
-//         fields: [sessions.userId],
-//         references: [users.id],
-//     }),
-// }));
+export const sessionsRelations = relations(sessions, ({ one }) => ({
+    // Each session belongs to one user
+    user: one(users, {
+        fields: [sessions.userId],
+        references: [users.id],
+    }),
+}));
 
 // export const users = pgTable('users', {
 //   id: serial('id').primaryKey(),

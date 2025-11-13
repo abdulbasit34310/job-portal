@@ -49,6 +49,8 @@ export default function RegisterPage() {
 
     const handleInput = async (data: RegisterUserWithConfirmData) => {
         const result = await registerUserAction(data);
+        
+        console.log("Register result:", result);
 
         if (result.status === "SUCCESS") {
             // if (data.role === "employer") router.push("/employer-dashboard");

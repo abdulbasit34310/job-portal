@@ -1,19 +1,11 @@
 "use server";
 
-import { db } from "@/drizzle/db";
-import {  employers, users } from "@/drizzle/schema/schema";
+import { db } from "@/config/db";
+import { employers, users } from "@/drizzle/schema";
 import argon2 from "argon2";
 import { eq, or } from "drizzle-orm";
-import {
-  LoginUserData,
-  loginUserSchema,
-  RegisterUserData,
-  registerUserSchema,
-} from "../auth.schema";
-// import {
-//   createSessionAndSetCookies,
-//   invalidateSession,
-// } from "./use-cases/sessions";
+import { LoginUserData, loginUserSchema, RegisterUserData, registerUserSchema, } from "../auth.schema";
+import { createSessionAndSetCookies, invalidateSession, } from "./use-cases/sessions";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import crypto from "crypto";
@@ -74,11 +66,6 @@ export const registerUserAction = async (data: RegisterUserData) => {
   }
 };
 
-// type LoginData = {
-//   email: string;
-//   password: string;
-// };
-
 export const loginUserAction = async (data: LoginUserData) => {
   try {
     const { data: validatedData, error } = loginUserSchema.safeParse(data);
@@ -98,7 +85,7 @@ export const loginUserAction = async (data: LoginUserData) => {
     if (!isValidPassword)
       return { status: "ERROR", message: "Invalid Email or Password" };
 
-    // await createSessionAndSetCookies(user.id);
+    await createSessionAndSetCookies(user.id);
 
     return {
       status: "SUCCESS",
