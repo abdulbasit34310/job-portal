@@ -57,13 +57,14 @@ export const createSessionAndSetCookies = async (userId: number) => {
     maxAge: SESSION_LIFETIME,
   });
 };
+
 // Get user data after login using session id
 export const validateSessionAndGetUser = async (session: string) => {
   const hashedToken = crypto
     .createHash("sha-256")
     .update(session)
     .digest("hex");
-// inner join 
+  // inner join 
   const [user] = await db
     .select({
       id: users.id,
@@ -89,17 +90,14 @@ export const validateSessionAndGetUser = async (session: string) => {
 
   if (!user) return null;
 
-  // 2:
+  // Logout the user from the application after expiry time of session
   if (Date.now() >= user.session.expiresAt.getTime()) {
     await invalidateSession(user.session.id);
     return null;
   }
   // console.log(expiresAt.getTime()); // 1764562512000
-
-  if (
-    Date.now() >=
-    user.session.expiresAt.getTime() - SESSION_REFRESH_TIME * 1000
-  ) {
+  // If after 15 days of session generated date, if user login then update session expiry for next 30 days 
+  if (Date.now() >= user.session.expiresAt.getTime() - SESSION_REFRESH_TIME * 1000) {
     await db
       .update(sessions)
       .set({
