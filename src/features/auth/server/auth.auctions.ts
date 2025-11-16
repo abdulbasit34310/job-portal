@@ -5,10 +5,12 @@ import { employers, users } from "@/drizzle/schema";
 import argon2 from "argon2";
 import { eq, or } from "drizzle-orm";
 import { LoginUserData, loginUserSchema, RegisterUserData, registerUserSchema, } from "../auth.schema";
-import { createSessionAndSetCookies, invalidateSession, } from "./use-cases/sessions";
+import { createSessionAndSetCookies, invalidateSession, validateSessionAndGetUser} from "./use-cases/sessions";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import crypto from "crypto";
+import { cache } from "react";
+
 
 //*When you submit a <form> in Next.js using action={yourServerAction}, the framework sends a FormData object to that server function.
 
@@ -117,3 +119,13 @@ export const logoutUserAction = async () => {
 
   return redirect("/login");
 };
+
+export const getCurrentUser = cache(async () => {
+  const cookieStore = await cookies();
+  const session = cookieStore.get("session")?.value;
+
+  if (!session) return null;
+
+  const user = await validateSessionAndGetUser(session);
+  return user;
+});

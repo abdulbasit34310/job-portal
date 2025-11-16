@@ -57,13 +57,13 @@ export const createSessionAndSetCookies = async (userId: number) => {
     maxAge: SESSION_LIFETIME,
   });
 };
-
+// Get user data after login using session id
 export const validateSessionAndGetUser = async (session: string) => {
   const hashedToken = crypto
     .createHash("sha-256")
     .update(session)
     .digest("hex");
-
+// inner join 
   const [user] = await db
     .select({
       id: users.id,
