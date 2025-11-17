@@ -34,7 +34,7 @@ export const registerUserAction = async (data: RegisterUserData) => {
       else
         return {
           status: "ERROR",
-          message: "UseName Already Exists",
+          message: "Username Already Exists",
         };
     }
 
