@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/config/db";
-import { employers, users } from "@/drizzle/schema";
+import { applicants, employers, users } from "@/drizzle/schema";
 import argon2 from "argon2";
 import { eq, or } from "drizzle-orm";
 import { LoginUserData, loginUserSchema, RegisterUserData, registerUserSchema, } from "../auth.schema";
@@ -114,7 +114,7 @@ export const logoutUserAction = async () => {
     .update(session)
     .digest("hex");
 
-  // await invalidateSession(hashedToken);
+  await invalidateSession(hashedToken);
   cookieStore.delete("session");
 
   return redirect("/login");
