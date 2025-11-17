@@ -37,7 +37,7 @@ const LoginForm: React.FC = () => {
 
       if (result.status === "SUCCESS") toast.success(result.message);
       else toast.error(result.message);
-    } catch (error) {}
+    } catch (error) { }
   };
 
   return (
@@ -64,9 +64,8 @@ const LoginForm: React.FC = () => {
                   placeholder="Enter your email"
                   required
                   {...register("email")}
-                  className={`pl-10 ${
-                    errors.email ? "border-destructive" : ""
-                  }`}
+                  className={`pl-10 ${errors.email ? "border-destructive" : ""
+                    }`}
                 />
               </div>
               {errors.email && (
@@ -87,9 +86,8 @@ const LoginForm: React.FC = () => {
                   placeholder="Create a strong password"
                   required
                   {...register("password")}
-                  className={`pl-10 ${
-                    errors.password ? "border-destructive" : ""
-                  }`}
+                  className={`pl-10 ${errors.password ? "border-destructive" : ""
+                    }`}
                 />
 
                 <Button
@@ -120,14 +118,17 @@ const LoginForm: React.FC = () => {
 
             <div className="text-center">
               <p className="text-sm text-muted-foreground">
-                Already have an account?
+                Don't have an account yet?{" "}
                 <Link
                   href="/register"
                   className="text-primary hover:text-primary/80 font-medium underline-offset-4 hover:underline"
                 >
-                  Sign in here
+                  Sign Up here
                 </Link>
               </p>
+            </div>
+            <div className="text-center">
+              
             </div>
           </form>
         </CardContent>

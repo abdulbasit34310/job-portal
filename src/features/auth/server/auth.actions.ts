@@ -5,26 +5,24 @@ import { applicants, employers, users } from "@/drizzle/schema";
 import argon2 from "argon2";
 import { eq, or } from "drizzle-orm";
 import { LoginUserData, loginUserSchema, RegisterUserData, registerUserSchema, } from "../auth.schema";
-import { createSessionAndSetCookies, invalidateSession, validateSessionAndGetUser} from "./use-cases/sessions";
+import { createSessionAndSetCookies, invalidateSession, validateSessionAndGetUser } from "./use-cases/sessions";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import crypto from "crypto";
 import { cache } from "react";
 
-
 //*When you submit a <form> in Next.js using action={yourServerAction}, the framework sends a FormData object to that server function.
-
 // FormData is a built-in Web API type (just like Request, Response, or URLSearchParams).
-
 // It provides methods like .get(), .set(), .append(), and .entries() — which you’re already using here.
 
 export const registerUserAction = async (data: RegisterUserData) => {
   try {
     const { data: validatedData, error } = registerUserSchema.safeParse(data);
     if (error) return { status: "ERROR", message: error.issues[0].message };
-    // console.log(formData.get("name"));
+    console.log("registerUserAction zod validatedData", validatedData);
     const { name, userName, email, password, role } = validatedData;
 
+    // Check Email or Username already exists or not?
     const [user] = await db
       .select()
       .from(users)
@@ -42,20 +40,20 @@ export const registerUserAction = async (data: RegisterUserData) => {
 
     const hashPassword = await argon2.hash(password);
 
-    const [result] = await db
-      .insert(users)
-      .values({ name, userName, email, password: hashPassword, role });
+    await db.transaction(async (tx) => {
+      // Adding Register User Data to Database
+      const [result] = await tx
+        .insert(users)
+        .values({ name, userName, email, password: hashPassword, role })
+        .returning();
 
-    console.log(result);
-
-    if (role === "applicant") {
-      // await db.insert(applicants).values({ id: result.insertId });
-    } else {
-      // await db.insert(employers).values({ id: result.insertId });
-    }
-
-    // await createSessionAndSetCookies(result.insertId);
-
+      if (role === "applicant") {
+        await tx.insert(applicants).values({ id: result.id });
+      } else {
+        await tx.insert(employers).values({ id: result.id });
+      }
+      await createSessionAndSetCookies(result.id);
+    })
     return {
       status: "SUCCESS",
       message: "Registration Completed Successfully",

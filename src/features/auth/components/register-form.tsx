@@ -46,8 +46,9 @@ const RegistrationForm = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const onSubmit = async (data: RegisterUserWithConfirmData) => {
+    // console.log("onSubmit register-form data", data);
     const result = await registerUserAction(data);
-
+    // console.log("onSubmit register-form result", result);
     if (result.status === "SUCCESS") {
       if (data.role === "employer") router.push("/employer-dashboard");
       else router.push("/dashboard");
@@ -210,12 +211,12 @@ const RegistrationForm = () => {
 
             <div className="text-center">
               <p className="text-sm text-muted-foreground">
-                Already have an account?
+                Already have an account?{" "}
                 <Link
                   href="/login"
                   className="text-primary hover:text-primary/80 font-medium underline-offset-4 hover:underline"
                 >
-                  Sign in here
+                  Sign In here
                 </Link>
               </p>
             </div>
